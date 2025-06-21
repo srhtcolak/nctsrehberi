@@ -18,7 +18,7 @@
         html { height: 100%; }
         body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; display: flex; flex-direction: column; min-height: 100%; }
         .main-container { flex: 1; }
-        .view { display: none; width: 100%; min-height: 100vh; box-sizing: border-box; }
+        .view { display: none; width: 100%; height: 100vh; box-sizing: border-box; }
         .view.active { display: flex; }
         .back-to-home { position: fixed; top: 20px; left: 20px; background-color: var(--card-bg); border: 1px solid var(--border-color); padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: 500; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
@@ -35,10 +35,10 @@
         .choice-card p { font-size: 1rem; color: var(--text-light); line-height: 1.6; }
         
         /* Kütüphane Stilleri */
-        #library-view { flex-direction: row; align-items: stretch; position: relative; }
-        .sidebar { flex: 0 0 280px; background-color: var(--card-bg); border-right: 1px solid var(--border-color); height: 100vh; padding: 20px; box-sizing: border-box; overflow-y: auto; padding-top: 70px; position: fixed; left:0; top:0; }
-        .main-content { flex: 1; padding: 30px; padding-top: 70px; overflow-y: auto; height: 100%; box-sizing: border-box; position: relative; margin-left: 280px; margin-right: 450px; }
-        .info-panel { flex: 0 0 450px; background-color: #fdfdff; border-left: 1px solid var(--border-color); height: 100vh; padding: 25px; box-sizing: border-box; overflow-y: auto; padding-top: 70px; position: fixed; right: 0; top: 0; }
+        #library-view { flex-direction: row; align-items: stretch; }
+        .sidebar { flex: 0 0 280px; background-color: var(--card-bg); border-right: 1px solid var(--border-color); height: 100vh; padding: 20px; box-sizing: border-box; overflow-y: auto; padding-top: 70px; position: fixed; left:0; top:0; z-index: 50;}
+        .main-content { flex: 1; padding: 30px; padding-top: 70px; overflow-y: auto; box-sizing: border-box; margin-left: 280px; margin-right: 450px; }
+        .info-panel { flex: 0 0 450px; background-color: #fdfdff; border-left: 1px solid var(--border-color); height: 100vh; padding: 25px; box-sizing: border-box; overflow-y: auto; padding-top: 70px; position: fixed; right: 0; top: 0; z-index: 50;}
         .sidebar h2 { font-size: 20px; margin-top: 0; color: var(--accent-color); }
         #search-box { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 5px; margin-bottom: 20px; box-sizing: border-box; font-size: 14px; }
         .sidebar ul { list-style: none; padding: 0; margin: 0; }
@@ -54,48 +54,40 @@
         /* Simülatör Stilleri */
         #simulator-view { flex-direction: column; align-items: center; padding: 80px 20px 40px 20px; }
         .timeline-container { position: relative; width: 100%; max-width: 800px; }
-        .timeline-container::before, .timeline-item, .timeline-content { /* ... Önceki koddan stiller ... */ }
+        .timeline-container::before { content: ''; position: absolute; left: 50%; transform: translateX(-50%); top: 0; width: 4px; height: 100%; background-color: var(--border-color); }
+        .timeline-item { position: relative; margin-bottom: 50px; width: 50%; }
+        .timeline-item:nth-child(odd) { left: 0; padding-right: 50px; }
+        .timeline-item:nth-child(even) { left: 50%; padding-left: 50px; }
+        .timeline-content { background-color: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); position: relative; }
+        .timeline-content::after { content: ''; position: absolute; top: 20px; width: 0; height: 0; border-style: solid; }
+        .timeline-item:nth-child(odd) .timeline-content::after { right: -15px; border-width: 8px 0 8px 16px; border-color: transparent transparent transparent var(--card-bg); }
+        .timeline-item:nth-child(even) .timeline-content::after { left: -15px; border-width: 8px 16px 8px 0; border-color: transparent var(--card-bg) transparent transparent; }
+        .node-icon { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 50px; height: 50px; border-radius: 50%; border: 4px solid var(--accent-color); background-color: var(--accent-color); color: white; display: flex; align-items: center; justify-content: center; font-size: 24px; z-index: 10; }
+        .timeline-item:nth-child(odd) .node-icon { right: -25px; left: auto; transform: none; }
+        .timeline-item:nth-child(even) .node-icon { left: -25px; transform: none; }
+        .timeline-item.is-active .node-icon { animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(79, 70, 229, 0); } 100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); } }
+        .timeline-content h3 { margin-top: 0; font-size: 1.2rem; }
+        .timeline-content p { font-size: 0.95rem; color: var(--text-light); }
+        .options-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+        .option-btn { background-color: var(--accent-color); color: white; border: none; padding: 10px 15px; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; }
+        .option-btn:disabled { background-color: #ccc; cursor: not-allowed; }
 
-        /* YENİ: DUYARLILIK (RESPONSIVE) DÜZENLEMELERİ */
+        /* Duyarlılık (Responsive) Düzenlemeleri */
         @media (max-width: 1280px) {
-            .main-content {
-                margin-right: 0; /* Sağ paneli akışa dahil et */
-            }
-            .info-panel {
-                position: relative; /* Sabit pozisyondan çıkar */
-                width: auto;
-                flex: 1 1 100%; /* Tam genişlik kapla */
-                border-left: none;
-                border-top: 2px solid var(--border-color);
-                height: auto;
-                min-height: 100vh; /* Açıklama uzunsa sayfanın kaymasını sağla */
-            }
-            #library-view {
-                flex-wrap: wrap; /* Sütunların alt alta geçmesine izin ver */
-            }
+            .main-content { margin-right: 0; }
+            .info-panel { position: static; width: 100%; flex-basis: 100%; border-left: none; border-top: 2px solid var(--border-color); height: auto; max-height: none; }
+            #library-view { flex-direction: column; }
+            .main-content { margin-left: 280px; }
         }
         @media (max-width: 992px) {
-            .main-content {
-                margin-left: 0; /* Sol menüyü de akışa dahil et */
-            }
-            .sidebar {
-                position: relative;
-                width: auto;
-                flex: 1 1 100%; /* Tam genişlik kapla */
-                border-right: none;
-                border-bottom: 2px solid var(--border-color);
-                height: auto;
-                padding-top: 20px;
-            }
-            .back-to-home {
-                /* Geri dön butonu menünün altında kalmasın diye */
-                position: sticky; 
-            }
-             .main-content, .info-panel {
-                padding-top: 30px; /* Üst boşlukları ayarla */
-            }
+            .main-content { margin-left: 0; }
+            .sidebar { position: static; width: 100%; flex-basis: 100%; border-right: none; border-bottom: 2px solid var(--border-color); height: auto; max-height: none; padding-top: 20px; }
+            #library-view { flex-direction: column; }
+            .back-to-home { position: sticky; top:20px; }
+            .main-content, .info-panel { padding-top: 30px; }
         }
-
+        
         /* Footer Stili */
         .app-footer { background-color: var(--bg-color); color: var(--text-light); text-align: center; padding: 25px; border-top: 1px solid var(--border-color); font-size: 0.9rem; }
     </style>
@@ -103,8 +95,25 @@
 <body>
     <div class="main-container">
         <div id="home-view" class="view active">
-            <div class="home-title-section"><h1>NCTS Rehberi</h1><p>NCTS süreçlerini ve statü kodlarını anlamak için tasarlanmış hepsi bir arada yardımcınız.</p></div><hr class="divider-line"><div class="choice-container"><div id="go-to-library" class="choice-card"><div class="icon">📚</div><h2>Statü Kütüphanesi</h2><p>Tüm NCTS statülerini arayın, filtreleyin ve gümrük idarelerine göre ayrılmış detaylarını öğrenin.</p></div><div id="go-to-simulator" class="choice-card"><div class="icon">🔀</div><h2>İnteraktif Simülatör</h2><p>Bir transit sürecini adım adım, gerçekçi mesajlaşma akışıyla dikey bir zaman tünelinde deneyimleyin.</p></div></div>
+            <div class="home-title-section">
+                <h1>NCTS Rehberi</h1>
+                <p>NCTS süreçlerini ve statü kodlarını anlamak için tasarlanmış hepsi bir arada yardımcınız.</p>
+            </div>
+            <hr class="divider-line">
+            <div class="choice-container">
+                <div id="go-to-library" class="choice-card">
+                    <div class="icon">📚</div>
+                    <h2>Statü Kütüphanesi</h2>
+                    <p>Tüm NCTS statülerini arayın, filtreleyin ve gümrük idarelerine göre ayrılmış detaylarını öğrenin.</p>
+                </div>
+                <div id="go-to-simulator" class="choice-card">
+                    <div class="icon">🔀</div>
+                    <h2>İnteraktif Simülatör</h2>
+                    <p>Bir transit sürecini adım adım, gerçekçi mesajlaşma akışıyla dikey bir zaman tünelinde deneyimleyin.</p>
+                </div>
+            </div>
         </div>
+
         <div id="library-view" class="view">
             <button class="back-to-home">Ana Sayfaya Dön</button>
             <nav class="sidebar">
@@ -120,23 +129,108 @@
                 </ul>
             </nav>
             <main class="main-content">
-                 <section id="grup-hareket" class="status-group"><h3>Hareket Gümrük İdaresi</h3><div class="status-grid"></div></section>
-                  </main>
+                <section id="grup-hareket" class="status-group">
+                <h3>Hareket Gümrük İdaresi</h3>
+                <div class="status-grid">
+                    <div class="status" data-id="IE015" data-desc="Yükümlünün transit beyannamesi verilerini gümrük sistemine göndermesi."><strong>IE015 / DEC DAT</strong><span>Declaration Data</span></div>
+                    <div class="status" data-id="IE928" data-desc="Sistemin, gönderilen mesajı teknik olarak sorunsuz aldığını bildiren olumlu teyit mesajı."><strong>IE928 / POS ACK</strong><span>Positive Acknowledge</span></div>
+                    <div class="status" data-id="IE028" data-desc="Gümrüğün beyanı kabul edip bir MRN ataması."><strong>IE028 / MRN ALL</strong><span>MRN Allocated</span></div>
+                    <div class="status" data-id="IE017" data-desc="Hareket gümrüğünün yaptığı kontrolün sonuçlarını bildiren mesaj."><strong>IE017 / DEP CON</strong><span>Departure Control Results</span></div>
+                    <div class="status" data-id="IE200" data-desc="Teminatın geçerliliğini kontrol etmek için gönderilen mesaj."><strong>IE200 / GUA CHE</strong><span>Guarantee Check</span></div>
+                    <div class="status" data-id="IE201" data-desc="Teminat kontrolü (GUA CHE) mesajına verilen cevap."><strong>IE201 / GUA RES</strong><span>Guarantee Check Result</span></div>
+                    <div class="status" data-id="IE203" data-desc="Bir işlem için teminatın kullanılma (bloke etme) talebi."><strong>IE203 / GUA USE</strong><span>Guarantee Use</span></div>
+                    <div class="status" data-id="IE205" data-desc="Teminat kullanım talebine (GUA USE) verilen cevap."><strong>IE205 / GUA USR</strong><span>Guarantee Use Result</span></div>
+                    <div class="status" data-id="IE055" data-desc="Kullanılan teminatın geçersiz olduğunu bildiren hata mesajı."><strong>IE055 / GUA INV</strong><span>Guarantee Not Valid</span></div>
+                    <div class="status" data-id="IE013" data-desc="Tescil edilmiş bir beyannamede değişiklik yapma talebi."><strong>IE013 / DEC AMD</strong><span>Declaration Amendment</span></div>
+                    <div class="status" data-id="IE004" data-desc="Değişiklik talebinin (DEC AMD) gümrük tarafından kabul edilmesi."><strong>IE004 / AMD ACC</strong><span>Amendment Acceptance</span></div>
+                    <div class="status" data-id="IE029" data-desc="Tüm kontroller sonrası aracın transit rejiminde sevkine izin verilmesi."><strong>IE029 / REL TRA</strong><span>Release for Transit</span></div>
+                    <div class="status" data-id="IE050" data-desc="Antispe edilen varış kaydı."><strong>IE050 / ATR SND</strong><span>Anticipated Transit Record</span></div>
+                    <div class="status" data-id="IE056" data-desc="Beyanın hareket gümrüğü tarafından reddedilmesi."><strong>IE056 / DEP REJ</strong><span>Rejection from Office of Departure</span></div>
+                    <div class="status" data-id="IE014" data-desc="Beyanın iptal edilmesi için gümrüğe yapılan talep."><strong>IE014 / DEC INV</strong><span>Declaration Invalidation Request</span></div>
+                    <div class="status" data-id="IE009" data-desc="İptal talebine gümrüğün verdiği karar (olumlu/olumsuz)."><strong>IE009 / INV DEC</strong><span>Invalidation Decision</span></div>
+                    <div class="status" data-id="IE051" data-desc="Kontrol vb. sonrası gümrüğün transite izin VERMEDİĞİNİ bildiren mesaj."><strong>IE051 / REL NOT</strong><span>No Release for Transit</span></div>
+                    <div class="status" data-id="IE170" data-desc="Önceden sunulmuş beyanname için eşyanın gümrüğe sunulduğunun bildirilmesi."><strong>IE170 / PRE NOT</strong><span>Presentation Notification</span></div>
+                    <div class="status" data-id="IE054" data-desc="Yükümlünün serbest bırakma talebinde bulunması."><strong>IE054 / REQ REL</strong><span>Request of Release</span></div>
+                    <div class="status" data-id="IE204" data-desc="Teminat kullanımının iptal edilmesi."><strong>IE204 / GUA CAN</strong><span>Guarantee Use Cancellation</span></div>
+                    <div class="status" data-id="IE045" data-desc="İşlemin başarıyla sonlandırılıp teminatın çözüldüğünü bildiren nihai mesaj."><strong>IE045 / WRT NOT</strong><span>Write-off Notification</span></div>
+                </div>
+            </section>
+            <section id="grup-transit" class="status-group">
+                <h3>Transit Gümrük İdaresi</h3>
+                <div class="status-grid">
+                    <div class="status" data-id="IE164" data-desc="Antispe edilen çıkış kaydı talebi."><strong>IE164 / AXR REQ</strong><span>Anticipated Exit Record Request</span></div>
+                    <div class="status" data-id="IE165" data-desc="Antispe edilen çıkış kaydı talebine cevap."><strong>IE165 / AXR RSP</strong><span>Anticipated Exit Record Response</span></div>
+                    <div class="status" data-id="IE168" data-desc="Güvenlik alanından ayrılış bildirimi."><strong>IE168 / LSA NOT</strong><span>Notification Leaving Security Area</span></div>
+                    <div class="status" data-id="IE118" data-desc="Aracın bir sınır kapısından geçtiğini bildiren mesaj."><strong>IE118 / NFC NOT</strong><span>Notification Crossing Frontier</span></div>
+                </div>
+            </section>
+            <section id="grup-varis" class="status-group">
+                <h3>Varış Gümrük İdaresi</h3>
+                <div class="status-grid">
+                    <div class="status" data-id="IE006" data-desc="Varışın gerçekleştiğine dair gümrükler arası teyit mesajı."><strong>IE006 / ARR ADV</strong><span>Arrival Advice</span></div>
+                    <div class="status" data-id="IE209" data-desc="Kredi referans tutarı."><strong>IE209 / GUA CRE</strong><span>Credit Reference Amount</span></div>
+                    <div class="status" data-id="IE024" data-desc="İletilmiş varış bildirimi teyidi."><strong>IE024 / FWD ARR</strong><span>Forwarded Arrival Advice</span></div>
+                    <div class="status" data-id="IE018" data-desc="Varış gümrüğünün yaptığı kontrolün sonuçlarını bildiren mesaj."><strong>IE018 / DES CON</strong><span>Destination Control Results</span></div>
+                    <div class="status" data-id="IE019" data-desc="Uyuşmazlıkların bildirilmesi."><strong>IE019 / DIS SND</strong><span>Discrepancies</span></div>
+                    <div class="status" data-id="IE049" data-desc="Uyuşmazlıkların çözüldüğünü bildiren mesaj."><strong>IE049 / DIS NOT</strong><span>Discrepancies Solved Notification</span></div>
+                    <div class="status" data-id="IE002" data-desc="Antispe edilen varış kaydı talebi."><strong>IE002 / AAR REQ</strong><span>Anticipated Arrival Record Request</span></div>
+                    <div class="status" data-id="IE003" data-desc="Antispe edilen varış kaydı talebine cevap."><strong>IE003 / AAR RSP</strong><span>Anticipated Arrival Record Response</span></div>
+                    <div class="status" data-id="IE007" data-desc="Aracın varış gümrüğüne ulaştığının yükümlü tarafından bildirilmesi."><strong>IE007 / ARR NOT</strong><span>Arrival Notification</span></div>
+                    <div class="status" data-id="IE043" data-desc="Varış gümrüğünün eşyanın boşaltılmasına izin vermesi."><strong>IE043 / ULD PER</strong><span>Unloading Permission</span></div>
+                    <div class="status" data-id="IE044" data-desc="Boşaltma sırasında tespit edilen uyuşmazlıkların (eksik/fazla) bildirilmesi."><strong>IE044 / ULD REM</strong><span>Unloading Remarks</span></div>
+                    <div class="status" data-id="IE025" data-desc="Eşyanın varış yerinde serbest bırakıldığını bildiren mesaj."><strong>IE025 / GDS REL</strong><span>Goods Release Notification</span></div>
+                </div>
+            </section>
+             <section id="grup-olay" class="status-group">
+                <h3>Olay Kaydı</h3>
+                <div class="status-grid">
+                     <div class="status" data-id="IE027" data-desc="Taşıma hakkında gümrükler arası sorgu."><strong>IE027 / MVT QUE</strong><span>Movement Query</span></div>
+                    <div class="status" data-id="IE038" data-desc="Taşıma sorgusuna (MVT QUE) verilen cevap."><strong>IE038 / MVT RSP</strong><span>Movement Response</span></div>
+                    <div class="status" data-id="IE180" data-desc="Taşıma sırasında bir olay (kaza, aktarma vb.) olduğunun bildirilmesi."><strong>IE180 / INC NOT</strong><span>Incident Notification</span></div>
+                    <div class="status" data-id="IE181" data-desc="Olay bildiriminin iletilmesi."><strong>IE181 / INC FWD</strong><span>Forwarded Incident Notification</span></div>
+                </div>
+            </section>
+            <section id="grup-arastirma" class="status-group">
+                <h3>Araştırma / Tahsilat</h3>
+                <div class="status-grid">
+                    <div class="status" data-id="IE095" data-desc="Statü sorgusuna sistemin verdiği cevap."><strong>IE095 / STD RSP</strong><span>Status Response</span></div>
+                    <div class="status" data-id="IE094" data-desc="Bir beyannamenin statüsünü sorgulama talebi."><strong>IE094 / STD REQ</strong><span>Status Request</span></div>
+                    <div class="status" data-id="IE143" data-desc="Soruşturma talebine (ENQ REQ) verilen cevap."><strong>IE143 / ENQ NEG</strong><span>Enquiry Response</span></div>
+                    <div class="status" data-id="IE151" data-desc="Kurtarma/tahsilat talebinin kabul edildiğinin bildirilmesi."><strong>IE151 / REC ACC</strong><span>Recovery Acceptance</span></div>
+                    <div class="status" data-id="IE150" data-desc="Kurtarma/tahsilat talebi."><strong>IE150 / REC REQ</strong><span>Recovery Request</span></div>
+                    <div class="status" data-id="IE144" data-desc="Soruşturma bilgisi."><strong>IE144 / ENQ INF</strong><span>Enquiry Information</span></div>
+                    <div class="status" data-id="IE142" data-desc="Zamanında varmayan beyan için gümrükler arası soruşturma talebi."><strong>IE142 / ENQ REQ</strong><span>Enquiry Request</span></div>
+                    <div class="status" data-id="IE152" data-desc="Kurtarma/tahsilat sevk bildirimi."><strong>IE152 / REC DIS</strong><span>Recovery Dispatch</span></div>
+                    <div class="status" data-id="IE059" data-desc="Soruşturma bildirimini iptal etme."><strong>IE059 / CAN ENQ</strong><span>Cancel Enquiry</span></div>
+                    <div class="status" data-id="IE145" data-desc="Soruşturma bilgi talebi."><strong>IE145 / INF REQ</strong><span>Information Request</span></div>
+                    <div class="status" data-id="IE063" data-desc="Kurtarma/tahsilat iletişimi."><strong>IE063 / REC COM</strong><span>Recovery Communication</span></div>
+                </div>
+            </section>
+            <section id="grup-hata" class="status-group">
+                <h3>Fonksiyonel Hatalar</h3>
+                <div class="status-grid">
+                    <div class="status" data-id="IE906" data-desc="Mesaj formatı doğru olsa da içerdiği işlevsel verilerde hata olduğunu bildiren teknik ret."><strong>IE906 / FUN NCK</strong><span>Functional NACK</span></div>
+                    <div class="status" data-id="IE917" data-desc="Gönderilen mesajın yapısında (XML formatında) hata olduğunu bildiren teknik ret."><strong>IE917 / XML NCK</strong><span>XML NACK</span></div>
+                </div>
+            </section>
+            </main>
             <aside class="info-panel">
-                <h4>NCTS Statü Detayı</h4><p>Lütfen listeden bir statüye tıklayın.</p>
+                <h4>NCTS Statü Detayı</h4>
+                <p>Lütfen listeden bir statüye tıklayın.</p>
             </aside>
         </div>
+
         <div id="simulator-view" class="view">
             <button class="back-to-home">Ana Sayfaya Dön</button>
-            </div>
+            <div id="timeline-container" class="timeline-container"></div>
+        </div>
     </div>
+
     <footer class="app-footer">
         &copy; <span id="current-year"></span> [Şirket Adınız / Proje Sahibi]. Tüm hakları saklıdır.
     </footer>
+
 <script>
-// Bu script bloğu, önceki mesajdaki tam fonksiyonel haliyle aynıdır.
-// Tüm görünüm yönetimi, kütüphane ve simülatör mantığı burada yer alır.
-// Yeni CSS kuralları sayesinde bu script farklı ekran boyutlarında sorunsuz çalışacaktır.
 document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('current-year').textContent = new Date().getFullYear();
     const views = document.querySelectorAll('.view');
@@ -164,22 +258,131 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function initializeLibrary() {
         if(libraryInitialized) return;
-        // ... Önceki tam koddan kütüphane JS'i ...
+        const statusBoxes = document.querySelectorAll('#library-view .status');
+        const infoPanel = document.querySelector('#library-view .info-panel');
+        const searchBox = document.getElementById('search-box');
+        const categoryMenu = document.getElementById('category-menu');
+        const statusGroups = document.querySelectorAll('#library-view .status-group');
+
+        statusBoxes.forEach(box => {
+            box.addEventListener('click', function () {
+                const title = this.querySelector('strong').textContent;
+                const longName = this.querySelector('span').textContent;
+                const description = this.dataset.desc;
+                infoPanel.innerHTML = `<h4>${title}</h4><p><strong>Açılımı:</strong> ${longName}</p><hr><p><strong>Anlamı:</strong> ${description}</p>`;
+            });
+        });
+
+        searchBox.addEventListener('input', function () {
+            const searchTerm = this.value.toLowerCase().trim();
+            statusGroups.forEach(group => {
+                let groupHasVisibleItems = false;
+                const statusesInGroup = group.querySelectorAll('.status');
+                statusesInGroup.forEach(box => {
+                    if (box.textContent.toLowerCase().includes(searchTerm)) {
+                        box.style.display = 'block';
+                        groupHasVisibleItems = true;
+                    } else {
+                        box.style.display = 'none';
+                    }
+                });
+                group.style.display = groupHasVisibleItems ? 'block' : 'none';
+            });
+        });
+
+        categoryMenu.addEventListener('click', function(e) {
+            if (e.target.tagName === 'A') {
+                e.preventDefault();
+                const targetId = e.target.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    searchBox.value = '';
+                    statusBoxes.forEach(box => box.style.display = 'block');
+                    statusGroups.forEach(group => group.style.display = 'block');
+                    targetElement.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        });
         libraryInitialized = true;
     }
+
+    const workflow = {
+        'START': { title: "Simülasyon Başlangıcı", desc: "Yeni bir transit beyannamesi göndermek için aşağıdaki butona tıklayın.", type: 'user_action', icon: '▶️', options: [{ text: 'Beyanı Gönder (IE015)', nextState: 'IE015_SENT' }] },
+        'IE015_SENT': { title: "IE015 - Beyan Gönderildi", desc: "Mesajınız gümrük sistemine iletildi. Sistemden teknik teyit bekleniyor...", type: 'system_response', icon: '📤', autoTransition: { nextState: 'POS_ACK_RECEIVED', delay: 1500 } },
+        'POS_ACK_RECEIVED': { title: "IE928 - Olumlu Teyit Alındı", desc: "Teknik teyit (POS_ACK) alındı. Beyanın içeriği kontrol edilecek ve tescil (MRN) beklenecek...", type: 'system_response', icon: '👍', autoTransition: { nextState: 'IE028_RECEIVED', delay: 2000 } },
+        'IE028_RECEIVED': { title: "IE028 - Beyan Kabul Edildi", desc: "Beyannameniz kabul edildi ve bir MRN atandı. Sistem şimdi kontrol kararını bildirecek...", type: 'system_response_success', icon: '✅', autoTransition: { nextState: 'IE060_RECEIVED', delay: 1500 } },
+        'IE060_RECEIVED': { title: "IE060 - Kontrol Kararı Verildi", desc: "Gümrük, beyan için kontrol kararı verdi. Şimdi kontrolü yapıp teminatı kullanmanız gerekiyor.", type: 'system_response', icon: '🔍', options: [{ text: 'Kontrolü Tamamla ve Teminatı Kullan', nextState: 'GUARANTEE_USE_SENT' }] },
+        'GUARANTEE_USE_SENT': { title: "IE203 - Teminat Kullanım Talebi", desc: "Kontroller tamamlandı ve teminatın kullanılması için sisteme talep gönderildi.", type: 'system_response', icon: '🔐', autoTransition: { nextState: 'GUARANTEE_USE_RESULT', delay: 1500 } },
+        'GUARANTEE_USE_RESULT': { title: "IE205 - Teminat Kullanım Sonucu", desc: "Teminat başarıyla kullanıldı. Artık sistemin aracı serbest bırakması bekleniyor.", type: 'system_response_success', icon: '✅', autoTransition: { nextState: 'IE029_RECEIVED', delay: 2000 } },
+        'IE029_RECEIVED': { title: "IE029 - Transit İçin Serbest Bırakıldı", desc: "Araç sevk edildi. Bir sonraki adım, sınır kapısından geçiş yapmaktır.", type: 'system_response_success', icon: '🚚', options: [{ text: 'Sınır Kapısını Geç (IE118)', nextState: 'FRONTIER_CROSSING' }] },
+        'FRONTIER_CROSSING': { title: "IE118 - Sınır Geçişi Bildirimi", desc: "Araç transit gümrüğünden geçti. Onay alındı ve araç yoluna devam ediyor.", type: 'system_response', icon: '🌐', options: [{ text: 'Varış Bildirimi Yap (IE007)', nextState: 'IE007_SENT' }] },
+        'IE007_SENT': { title: "IE007 - Varış Bildirimi Gönderildi", desc: "Araç varış gümrüğüne ulaştı, bildirim yapıldı. Gümrüğün boşaltma izni bekleniyor...", type: 'system_response', icon: '📥', autoTransition: { nextState: 'IE043_RECEIVED', delay: 2000 } },
+        'IE043_RECEIVED': { title: "IE043 - Boşaltma İzni Alındı", desc: "Gümrük boşaltma izni verdi. Boşaltma sonrası durumu bildirin.", type: 'system_response_success', icon: '✅', options: [{ text: 'Boşaltma Sorunsuz Tamamlandı', nextState: 'IE045_PROCESSED' }] },
+        'IE045_PROCESSED': { title: "IE045 - Rejim Sonlandırıldı (İbra)", desc: "Tüm işlemler başarıyla tamamlandı. Simülasyon bitti!", type: 'system_response_success', icon: '🏁', options: [] }
+    };
     
     function initializeSimulator() {
-        if(simulatorInitialized) {
-            // resetSimulator(); // Simülatör mantığı eklenince bu satır aktifleşir.
-            return;
+        if(simulatorInitialized) return;
+        const timelineContainer = document.getElementById('timeline-container');
+        let path = [];
+
+        function render() {
+            const currentStateKey = path[path.length - 1];
+            const state = workflow[currentStateKey];
+            if (!state) return;
+
+            const item = document.createElement('div');
+            item.className = 'timeline-item';
+            if (path.length > 1) { item.style.opacity = 0; item.style.transform = 'translateY(20px)'; }
+            const pastItems = timelineContainer.querySelectorAll('.timeline-item');
+            pastItems.forEach(pi => { pi.classList.remove('is-active'); if(!pi.classList.contains('is-past')) pi.classList.add('is-past'); });
+            item.classList.add('is-active');
+
+            const content = document.createElement('div');
+            content.className = 'timeline-content';
+            content.innerHTML = `<div class="node-icon">${state.icon}</div><h3>${state.title}</h3><p>${state.desc}</p><div class="options-grid"></div>`;
+            item.appendChild(content);
+            timelineContainer.appendChild(item);
+
+            const optionsGrid = content.querySelector('.options-grid');
+            if (state.autoTransition) {
+                setTimeout(() => { path.push(state.autoTransition.nextState); render(); }, state.autoTransition.delay);
+            } else if (state.options && state.options.length > 0) {
+                state.options.forEach(option => {
+                    const button = document.createElement('button');
+                    button.className = 'option-btn';
+                    button.textContent = option.text;
+                    button.addEventListener('click', () => {
+                        content.querySelectorAll('.option-btn').forEach(btn => btn.disabled = true);
+                        path.push(option.nextState);
+                        render();
+                    });
+                    optionsGrid.appendChild(button);
+                });
+            } else {
+                 const resetButton = document.createElement('button');
+                 resetButton.className = 'option-btn reset';
+                 resetButton.textContent = 'Yeni Simülasyon Başlat';
+                 resetButton.addEventListener('click', resetSimulator);
+                 optionsGrid.appendChild(resetButton);
+            }
+
+            if (path.length > 1) { requestAnimationFrame(() => { item.style.transition = 'opacity 0.5s, transform 0.5s'; item.style.opacity = 1; item.style.transform = 'translateY(0)'; }); }
+            item.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-        // ... Önceki tam koddan simülatör JS'i ...
+
+        function resetSimulator() {
+            timelineContainer.innerHTML = '';
+            path = ['START'];
+            render();
+        }
+
         simulatorInitialized = true;
+        resetSimulator();
+        document.querySelector('#simulator-view .back-to-home').addEventListener('click', resetSimulator);
     }
     
-    // NOT: Bu örnekte JS ve HTML içerikleri, sadece yapı ve CSS çözümünü göstermek için özetlenmiştir.
-    // Lütfen bir önceki mesajdaki tam kodu bu yapıya entegre edin.
-    showView('home-view'); // Başlangıçta Ana Sayfayı göster
+    showView('home-view');
 });
 </script>
 </body>
